@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparação Antes e Depois</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #1e1e1e, #3a3a3a);
+        }
+
+        .comparacao-container {
+            position: relative;
+            width: 500px;
+            height: 300px;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .imagem {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+            pointer-events: none;
+        }
+
+        .imagem-superior {
+            clip-path: inset(0 50% 0 0);
+        }
+
+
+        .barra {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 5px;
+            height: 100%;
+            background: white;
+            cursor: grab;
+            transform: translateX(-50%);
+        }
+
+        .barra::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 15px;
+            height: 15px;
+            background: white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="comparacao-container" id="container">
+        <img src="laranja.jpeg" alt="Imagem Antes" class="imagem">
+        <img src="abacaxi.jpeg" alt="Imagem Depois" class="imagem imagem-superior" id="imagemDepois">
+        <div class="barra" id="barra"></div>
+    </div>
+
+    <script>
+        const barra = document.getElementById("barra");
+        const imagemDepois = document.getElementById("imagemDepois");
+        const container = document.getElementById("container");
+
+        let isDragging = false;
+
+        barra.addEventListener("mousedown", () => isDragging = true);
+        document.addEventListener("mouseup", () => isDragging = false);
+        document.addEventListener("mousemove", (e) => {
+            if (!isDragging) return;
+
+            let rect = container.getBoundingClientRect();
+            let posX = e.clientX - rect.left;
+
+            if (posX < 0) posX = 0;
+            if (posX > rect.width) posX = rect.width;
+
+            let percent = (posX / rect.width) * 100;
+
+            imagemDepois.style.clipPath = `inset(0 ${100 - percent}% 0 0)`;
+            barra.style.left = `${percent}%`;
+        });
+
+      
+        barra.addEventListener("touchstart", () => isDragging = true);
+        document.addEventListener("touchend", () => isDragging = false);
+        document.addEventListener("touchmove", (e) => {
+            if (!isDragging) return;
+
+            let touch = e.touches[0];
+            let rect = container.getBoundingClientRect();
+            let posX = touch.clientX - rect.left;
+
+            if (posX < 0) posX = 0;
+            if (posX > rect.width) posX = rect.width;
+
+            let percent = (posX / rect.width) * 100;
+
+            imagemDepois.style.clipPath = `inset(0 ${100 - percent}% 0 0)`;
+            barra.style.left = `${percent}%`;
+        });
+    </script>
+
+</body>
+</html>
